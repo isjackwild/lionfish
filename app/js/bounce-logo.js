@@ -148,12 +148,12 @@ const onOrientation = ({ beta, gamma }) => {
 		movement += Math.abs(beta - orientation.beta);
 		movement += Math.abs(gamma - orientation.gamma);
 	}
-	
+
 	orientation.beta = beta;
 	orientation.gamma = gamma;
 
-	document.querySelector('.tilt').style.top = y + 'px';
-	document.querySelector('.tilt').style.left = x + 'px';
+	// document.querySelector('.tilt').style.top = y + 'px';
+	// document.querySelector('.tilt').style.left = x + 'px';
 
 	onMouseMove({ point: { x, y }});
 };
@@ -165,8 +165,6 @@ const onFrame = () => {
 	} else {
 		isMoving = false;
 	}
-
-	console.log(movement);
 
 	logo.update();
 };
