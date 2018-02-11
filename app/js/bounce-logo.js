@@ -1,3 +1,4 @@
+import _ from 'lodash';
 const paper = require('paper');
 
 let MAX_STRETCH, SPRING_STRENGTH, MOUSE_ATTRECTION_STRENGTH;
@@ -11,7 +12,7 @@ const orientation = {
 };
 
 export const init = () => {
-	MAX_STRETCH = window.mobile ? 0.25 : 0.15;
+	MAX_STRETCH = window.mobile ? 0.25 : 0.1;
 	SPRING_STRENGTH = 0.04;
 	MOUSE_ATTRECTION_STRENGTH = window.mobile ? 0.033 : 0.02;
 	isTouched = window.mobile ? false : true;
@@ -24,6 +25,10 @@ export const init = () => {
 	tool = new Tool();
 	tool.onMouseMove = onMouseMove;
 	view.onFrame = onFrame;
+	view.onResize = () => {
+		logo.group.remove();
+		logo = Logo(document.getElementById('logo'));
+	}
 
 	logo = Logo(document.getElementById('logo'));
 
@@ -64,7 +69,7 @@ const SpringPoint = (point, r) => {
 		
 		current.x += velocity.x *= DAMPING;
 		current.y += velocity.y *= DAMPING;
-	}
+	};
 
 	return { update };
 };
@@ -81,15 +86,20 @@ const Logo = (svg) => {
 	const main = logoSVG.children['main'];
 	logoSVG._children.forEach(c => group.addChild(c));
 	group.addChild(main);
-	group.scale(3);
-	// group.selected = true;
+
+	const ratio = group.bounds.height / group.bounds.width;
+
+	const scale = window.innerWidth > 414 ? 0.15 : 0.45;
+	group.bounds.width = window.innerWidth * scale;
+	group.bounds.height = group.bounds.width * ratio;
 	group.center = view.center;
+	group.center.y -= group.bounds.height * 0.45;
 	group.position = view.center;
-	console.log(group);
 
 	// return;
 	const springPoints = [];
 	const paths = [];
+
 
 	const addSpringPoints = (path) => {
 		paths.push(path);
@@ -110,7 +120,8 @@ const Logo = (svg) => {
 		// paths.forEach(p => p.smooth());
 	};
 
-	return { update };
+
+	return { update, group };
 };
 
 const convertToRange = (value, srcRange, dstRange) => {
@@ -142,7 +153,7 @@ const onOrientation = ({ beta, gamma }) => {
 	if (isTouched) return;
 
 	const x = convertToRange(gamma, [-34, 34], [0, window.innerWidth]);
-	const y = convertToRange(beta, [15, 90], [0, window.innerHeight]);
+	const y = convertToRange(beta, [15, 90], [70, window.innerHeight - 120]);
 
 	if (movement < 50) {
 		movement += Math.abs(beta - orientation.beta);
@@ -166,5 +177,5 @@ const onFrame = () => {
 		isMoving = false;
 	}
 
-	logo.update();
+	if (logo) logo.update();
 };

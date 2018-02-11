@@ -20,6 +20,20 @@ canvas {
 	display: none;
 }
 
+.wordmark {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 28%;
+	margin-top: 7vw;
+
+	@media only screen and (max-width: 414px) {
+		width: 70%;
+		margin-top: 17vw;
+	}
+}
+
 .tilt {
 	position: fixed;
 	top: 0;
@@ -41,19 +55,44 @@ canvas {
 	left: 50%;
 	transform: translateX(-50%);
 	margin: 0;
+	list-style-position: inside; 
+	width: 100%;
+	text-align: center;
+
+	@media only screen and (max-width: 414px) {
+		bottom: 30px;
+	}
 }
 
 a {
 	text-decoration: none;
+	transition: opacity 0.2s ease;
+}
+
+a:hover {
+	opacity: 0.7;
+
+	@media only screen and (max-width: 414px) {
+		opacity: 1;
+	}
+}
+
+a:active {
+	opacity: 0.4;
 }
 
 .social__icon {
 	color: #fff;
-	font-size: 20px;
+	font-size: 18px;
 	// width: 18px;
 	// height: 18px;
 	// background: #fff;
 	padding: 0 10px;
 	margin: 0 12px;
 	display: inline-block;
+
+	@media only screen and (max-width: 414px) {
+		margin: 0 10px;
+		font-size: 24px;
+	}
 }
