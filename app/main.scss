@@ -26,9 +26,9 @@ canvas {
 	left: 50%;
 	transform: translate(-50%, -50%);
 	width: 28%;
-	margin-top: 7vw;
+	margin-top: 7.2vw;
 
-	@media only screen and (max-width: 414px) {
+	@media only screen and (max-width: 768px) and (orientation: portrait) {
 		width: 70%;
 		margin-top: 17vw;
 	}
@@ -59,7 +59,7 @@ canvas {
 	width: 100%;
 	text-align: center;
 
-	@media only screen and (max-width: 414px) {
+	@media only screen and (max-width: 768px) and (orientation: portrait) {
 		bottom: 30px;
 	}
 }
@@ -72,7 +72,7 @@ a {
 a:hover {
 	opacity: 0.7;
 
-	@media only screen and (max-width: 414px) {
+	@media only screen and (max-width: 768px) and (orientation: portrait) {
 		opacity: 1;
 	}
 }
@@ -91,7 +91,7 @@ a:active {
 	margin: 0 12px;
 	display: inline-block;
 
-	@media only screen and (max-width: 414px) {
+	@media only screen and (max-width: 768px) and (orientation: portrait) {
 		margin: 0 10px;
 		font-size: 24px;
 	}

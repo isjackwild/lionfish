@@ -3,18 +3,19 @@ const paper = require('paper');
 
 let MAX_STRETCH, SPRING_STRENGTH, MOUSE_ATTRECTION_STRENGTH;
 
-const DAMPING = 0.87;
+const DAMPING = 0.85;
 
 let logo, tool, mousePosition, isTouched, isMoving, movement = 0;
+const calibrationValues = [];
 const orientation = {
 	beta: 0,
 	gamma: 0,
 };
 
 export const init = () => {
-	MAX_STRETCH = window.mobile ? 0.25 : 0.1;
-	SPRING_STRENGTH = 0.04;
-	MOUSE_ATTRECTION_STRENGTH = window.mobile ? 0.033 : 0.02;
+	MAX_STRETCH = window.mobile ? 0.25 : 0.08;
+	SPRING_STRENGTH = 0.033;
+	MOUSE_ATTRECTION_STRENGTH = window.mobile ? 0.028 : 0.015;
 	isTouched = window.mobile ? false : true;
 
 	paper.install(window);
@@ -66,7 +67,7 @@ const SpringPoint = (point, r) => {
 			velocity.x += (target.x - current.x) * SPRING_STRENGTH;
 			velocity.y += (target.y - current.y) * SPRING_STRENGTH;
 		}
-		
+
 		current.x += velocity.x *= DAMPING;
 		current.y += velocity.y *= DAMPING;
 	};
@@ -76,8 +77,7 @@ const SpringPoint = (point, r) => {
 
 const Logo = (svg) => {
 	const logoSVG = paper.project.importSVG(svg, {
-		onLoad: (s) => console.log('loadedSVG', s.children),
-		onError: (e) => console.log('error', e),
+		onError: e => console.log('error', e),
 		applyMatrix: true,
 		expandShapes: true,
 		insert: false,
@@ -89,11 +89,11 @@ const Logo = (svg) => {
 
 	const ratio = group.bounds.height / group.bounds.width;
 
-	const scale = window.innerWidth > 414 ? 0.15 : 0.45;
+	const scale = !window.mobileLayout ? 0.18 : 0.45;
 	group.bounds.width = window.innerWidth * scale;
 	group.bounds.height = group.bounds.width * ratio;
 	group.center = view.center;
-	group.center.y -= group.bounds.height * 0.45;
+	group.center.y -= !window.mobileLayout ? group.bounds.height * 0.4 : group.bounds.height * 0.45;
 	group.position = view.center;
 
 	// return;
@@ -149,11 +149,20 @@ const onTouchEnd = () => {
 	isTouched = false;
 };
 
-const onOrientation = ({ beta, gamma }) => {
+const onOrientation = ({ alpha, beta, gamma }) => {
 	if (isTouched) return;
+	let _b = window.innerWidth < window.innerHeight ? beta : gamma;
+	const _g = window.innerWidth < window.innerHeight ? gamma : beta;
 
-	const x = convertToRange(gamma, [-34, 34], [0, window.innerWidth]);
-	const y = convertToRange(beta, [15, 90], [70, window.innerHeight - 120]);
+	if (calibrationValues.length > 60 * 6) calibrationValues.shift();
+	calibrationValues.push(_b);
+	let calibration = calibrationValues.reduce((acc, val) => acc + val);
+	calibration /= calibrationValues.length;
+
+	_b -= calibration;
+
+	const x = convertToRange(_g, [-34, 34], [window.innerWidth * 0.18, window.innerWidth * 0.82]);
+	const y = convertToRange(_b, [-45, 45], [window.innerHeight * 0.16, window.innerHeight * 0.55]);
 
 	if (movement < 50) {
 		movement += Math.abs(beta - orientation.beta);
